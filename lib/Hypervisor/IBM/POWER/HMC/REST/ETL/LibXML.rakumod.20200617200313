@@ -1,0 +1,120 @@
+use     Terminal::ANSIColor;
+use     URI;
+use     LibXML;
+unit    role Hypervisor::IBM::POWER::HMC::REST::ETL::XML:api<1>:auth<Mark Devine (mark@markdevine.com)>;
+
+proto method etl-branches (:$TAG is required, :$xml is required, Bool :$optional --> Array) { * };
+multi method etl-branches (Str:D :$TAG is required, LibXML::Document:D :$xml is required, Bool :$optional --> Array) {
+    note colored(sprintf("%-20s %10s: %11s %s", &?ROUTINE.name, 'TRANSFORM', 't' ~ $*THREAD.id, 'LibXML::Document -> LibXML::Element'), 'black on_magenta') if %*ENV<HIPH_ETL_BRANCHES>;
+    my LibXML::Element $root = $xml.root;
+    self.etl-branches(:$TAG, :xml($root), :$optional);
+}
+multi method etl-branches (Str:D :$TAG is required, LibXML::Element:D :$xml is required, Bool :$optional --> Array) {
+    my @xml-nodes = $xml.getChildrenByTagName($TAG);
+    note colored(sprintf("%-20s %10s: %11s %d elements of '%s'", &?ROUTINE.name, 'GATHER', 't' ~ $*THREAD.id, @xml-nodes.elems, $TAG), 'black on_magenta') if %*ENV<HIPH_ETL_BRANCHES>;
+    return @xml-nodes if @xml-nodes.elems;
+    return Array.new() if $optional;
+    note &?ROUTINE.name ~ ': Expected TAG <' ~ $TAG ~ '> not found in xml source';
+}
+multi method etl-branches (Str:D :$TAG is required, LibXML::Element :$xml is required, Bool :$optional --> Array) {
+    return Array.new() if $optional;
+    note &?ROUTINE.name ~ ': Expected TAG <' ~ $TAG ~ '> not found in empty xml source';
+}
+
+proto method etl-branch (:$TAG is required, :$xml is required, Bool :$optional --> LibXML::Element) { * };
+multi method etl-branch (Str:D :$TAG is required, LibXML::Document:D :$xml is required, Bool :$optional --> LibXML::Element) {
+    note colored(sprintf("%-20s %10s: %11s %s", &?ROUTINE.name, 'TRANSFORM', 't' ~ $*THREAD.id, 'LibXML::Document -> LibXML::Element'), 'black on_magenta') if %*ENV<HIPH_ETL_BRANCH>;
+    my LibXML::Element $root = $xml.documentElement();
+    self.etl-branch(:$TAG, :xml($root), :$optional);
+};
+multi method etl-branch (Str:D :$TAG is required, LibXML::Element:D :$xml is required, Bool :$optional --> LibXML::Element) {
+    my @xml-nodes = $xml.getChildrenByTagName($TAG);
+    note colored(sprintf("%-20s %10s: %11s %s", &?ROUTINE.name, 'ISOLATE', 't' ~ $*THREAD.id, $TAG), 'black on_magenta') if %*ENV<HIPH_ETL_BRANCH>;
+    return @xml-nodes if @xml-nodes && @xml-nodes.elems == 1;
+    die &?ROUTINE.name ~ ': Singular TAG <' ~ $TAG ~ '> has siblings in xml source' if @xml-nodes.elems > 1;
+    return LibXML::Element if $optional;
+    note &?ROUTINE.name ~ ': Expected TAG <' ~ $TAG ~ '> not found in xml source';
+};
+multi method etl-branch (Str :$TAG is required, :$xml is required, Bool :$optional --> LibXML::Element) {
+    return LibXML::Element if $optional;
+    note &?ROUTINE.name ~ ': TAG was expected';
+}
+
+proto method etl-text (:$TAG is required, :$xml is required, Bool :$optional --> Str) { * };
+multi method etl-text (Str:D :$TAG is required, LibXML::Document:D :$xml is required, Bool :$optional --> Str) {
+    note colored(sprintf("%-20s %10s: %11s %s", &?ROUTINE.name, 'TRANSFORM', 't' ~ $*THREAD.id, 'LibXML::Document -> LibXML::Element'), 'black on_magenta') if %*ENV<HIPH_ETL_TEXT_TRANSFORM>;
+    my LibXML::Element $root = $xml.documentElement();
+    self.etl-text(:$TAG, :xml($root), :$optional);
+};
+multi method etl-text (Str:D :$TAG is required, LibXML::Element:D :$xml is required, Bool :$optional --> Str) {
+    my @xml-nodes = $xml.getChildrenByTagName($TAG);
+    my $routine-name = &?ROUTINE.name;
+    die &?ROUTINE.name ~ ': Singular TAG <' ~ $TAG ~ '> has siblings in xml source' if @xml-nodes.elems > 1;
+    if @xml-nodes[0].can('nodes') && @xml-nodes[0].nodes.elems && @xml-nodes[0].nodes[0].textContent {
+        note colored(sprintf("%-20s %10s: %11s <%s> = '%s'", $routine-name, 'EXTRACT', 't' ~ $*THREAD.id, $TAG, @xml-nodes[0].nodes[0].textContent.trim), 'black on_magenta') if %*ENV<HIPH_ETL_TEXT_EXTRACT>;
+        return @xml-nodes[0].nodes[0].textContent.trim if @xml-nodes[0].nodes[0].elems == 1;
+        die &?ROUTINE.name ~ ': Mandatory TAG <' ~ $TAG ~ '> not found in xml source' unless $optional;
+    }
+    note &?ROUTINE.name ~ ': Expected TAG <' ~ $TAG ~ '> not found in xml source' unless $optional;
+    Nil
+};
+multi method etl-text (Str:D :$TAG is required, LibXML::Element :$xml is required, Bool :$optional --> Str) {
+    note &?ROUTINE.name ~ ': Expected TAG <' ~ $TAG ~ '> not found in empty xml source' unless $optional;
+    Nil
+};
+
+proto method etl-texts (:$TAG is required, :$xml is required, Bool :$optional --> Str) { * };
+multi method etl-texts (Str:D :$TAG is required, LibXML::Document:D :$xml is required, Bool :$optional --> Str) {
+    note colored(sprintf("%-20s %10s: %11s %s", &?ROUTINE.name, 'TRANSFORM', 't' ~ $*THREAD.id, 'LibXML::Document -> LibXML::Element'), 'black on_magenta') if %*ENV<HIPH_ETL_TEXTS>;
+    my LibXML::Element $root = $xml.documentElement();
+    self.etl-texts(:$TAG, :xml($root), :$optional);
+}
+multi method etl-texts (Str:D :$TAG is required, LibXML::Element :$xml is required, Bool :$optional --> Array) {
+    my @xml-nodes = $xml.getChildrenByTagName($TAG);
+    unless @xml-nodes.elems {
+        return Array.new() if $optional;
+        note &?ROUTINE.name ~ ': Expected TAG <' ~ $TAG ~ '> not found in xml source';
+    }
+    my @texts;
+    for @xml-nodes -> $xml-node {
+#???    @texts.push: $xml-node.nodes[0].textContent.trim;
+        @texts.push: $xml-node.nodes[0].textContent.trim;
+    }
+    note colored(sprintf("%-20s %10s: %11s <%s> %d items", &?ROUTINE.name, 'EXTRACT', 't' ~ $*THREAD.id, $TAG, @texts.elems), 'black on_magenta') if %*ENV<HIPH_ETL_TEXTS>;
+    return @texts if @texts.elems;
+    Nil;
+}
+
+proto method etl-links-URIs (:$xml is required --> Array) { * };
+multi method etl-links-URIs (LibXML::Element:D :$xml is required --> Array) {
+    my @hrefs;
+    for $xml.getChildrenByTagName('link') -> $link {
+        push @hrefs, URI.new($link.getAttribute('href'));
+    }
+    note colored(sprintf("%-20s %10s: %11s %d URIs", &?ROUTINE.name, 'EXTRACT', 't' ~ $*THREAD.id, @hrefs.elems), 'black on_magenta') if %*ENV<HIPH_ETL_LINKS_URIS>;
+    return @hrefs;
+}
+multi method etl-links-URIs (LibXML::Element :$xml is required --> Array) {
+    return Array.new();
+}
+
+proto method etl-href (:$xml is required) { * };
+multi method etl-href (LibXML::Element:D :$xml is required --> URI) {
+    my $url = $xml.getAttribute('href');
+    note colored(sprintf("%-20s %10s: %11s '%s'", &?ROUTINE.name, 'EXTRACT', 't' ~ $*THREAD.id, $url), 'black on_magenta') if %*ENV<HIPH_ETL_HREF>;
+    return URI.new($url);
+}
+multi method etl-href (LibXML::Element :$xml is required) {
+    return Nil;
+}
+
+method xml-name-exceptions () { ... };
+
+method etl-node-name-check () {
+    for self.xml.getChildrenByLocalName('*') -> $element {
+        next if self.can($element.nodeName) || $element.nodeName (elem) self.xml-name-exceptions;
+        note self.^name ~ '::' ~ &?ROUTINE.name ~ ': ' ~ $element.nodeName ~ ' not implemented';
+    }
+}
+
+=finish
