@@ -7,7 +7,6 @@ need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::Virtua
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::VirtualFibreChannelMappings::VirtualFibreChannelMapping::Port;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::VirtualFibreChannelMappings::VirtualFibreChannelMapping::ServerAdapter;
 use     URI;
-use     LibXML;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::VirtualFibreChannelMappings::VirtualFibreChannelMapping:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -21,7 +20,6 @@ my      Lock                                                                    
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                                                                                                                   $.config is required;
 has     Bool                                                                                                                                                                        $.initialized = False;
 has     Bool                                                                                                                                                                        $.loaded = False;
-has     LibXML::Element                                                                                                                                                             $.xml is required;
 
 has     URI                                                                                                                                                                         $.AssociatedLogicalPartition;
 has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::VirtualFibreChannelMappings::VirtualFibreChannelMapping::ClientAdapter $.ClientAdapter;

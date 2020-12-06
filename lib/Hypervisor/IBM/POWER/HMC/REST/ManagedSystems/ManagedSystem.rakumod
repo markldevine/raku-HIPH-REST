@@ -31,7 +31,6 @@ has     Hypervisor::IBM::POWER::HMC::REST::Atom                                 
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                                                   $.config is required;
 has     Bool                                                                                                        $.loaded = False;
 has     Bool                                                                                                        $.initialized = False;
-has     LibXML::Element                                                                                             $.xml is required;
 has     Str                                                                                                         $.id;
 has     DateTime                                                                                                    $.published;
 has     Str                                                                                                         $.ActivatedLevel;

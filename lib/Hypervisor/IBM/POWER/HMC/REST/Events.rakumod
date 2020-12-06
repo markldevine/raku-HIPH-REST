@@ -19,7 +19,6 @@ my      Lock                                                $lock = Lock.new;
 has     Hypervisor::IBM::POWER::HMC::REST::Config           $.config is required;
 has     Bool                                                $.initialized = False;
 has     Bool                                                $.loaded = False;
-has     LibXML::Document                                    $.xml;
 
 has     Str                                                 $.id;
 has     DateTime                                            $.updated;
@@ -58,7 +57,7 @@ method init () {
     }
 
     my $parse-start             = now;
-    die 'Unable to read XML from ' ~ $xml-path unless $!xml = LibXML.parse(:location($xml-path), :!blanks);
+    self.etl-parse-path(:$xml-path);
     my $proceed-with-name-check = False;
     $lock.protect({
         if !$names-checked  {

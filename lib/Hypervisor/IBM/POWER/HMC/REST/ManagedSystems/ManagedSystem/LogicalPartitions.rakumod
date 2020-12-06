@@ -4,7 +4,6 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Optimize;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::LogicalPartitions::LogicalPartition;
-use     LibXML;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::LogicalPartitions:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -18,7 +17,6 @@ my      Lock                                                                    
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                                               $.config is required;
 has     Bool                                                                                                    $.initialized = False;
 has     Bool                                                                                                    $.loaded = False;
-has     LibXML::Document                                                                                        $.xml;
 has                                                                                                             $.Managed-System-Id is required;
 has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::LogicalPartitions::LogicalPartition   %.Logical-Partitions;
 has                                                                                                             @.Logical-Partition-Ids;
@@ -50,7 +48,7 @@ method init () {
     my $xml-path                = self.config.session-manager.fetch('/rest/api/uom/ManagedSystem/' ~ $!Managed-System-Id ~ '/LogicalPartition');
     self.config.diag.post:      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
     my $parse-start             = now;
-    die 'Unable to read XML from ' ~ $xml-path unless $!xml = LibXML.parse(:location($xml-path), :!blanks);
+    self.etl-parse-path(:$xml-path);
     self.config.diag.post:      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
     my @entries                 = self.etl-branches(:TAG<entry>, :$!xml);
     my @promises;

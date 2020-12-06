@@ -25,7 +25,6 @@ has     Hypervisor::IBM::POWER::HMC::REST::Atom                                 
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                               $.config is required;
 has     Bool                                                                                    $.initialized = False;
 has     Bool                                                                                    $.loaded = False;
-has     LibXML::Document                                                                        $.xml;
 has     Str                                                                                     $.id;
 has     Str                                                                                     @.AuthorizedKeysValue;
 has     Str                                                                                     $.BaseVersion;
@@ -72,7 +71,7 @@ method init () {
     my $xml-path                            = self.config.session-manager.fetch('/rest/api/uom/ManagementConsole');
     self.config.diag.post:                  sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
     my $parse-start                         = now;
-    die 'Unable to read XML from ' ~ $xml-path unless $!xml = LibXML.parse(:location($xml-path), :!blanks);
+    self.etl-parse-path(:$xml-path);
     my $proceed-with-name-check             = False;
     $lock.protect({
         if !$names-checked  { $proceed-with-name-check = True; $names-checked = True; }

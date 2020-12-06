@@ -2,12 +2,10 @@ need    Hypervisor::IBM::POWER::HMC::REST::Atom;
 need    Hypervisor::IBM::POWER::HMC::REST::Config;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 use     URI;
-use     LibXML;
 unit    class Hypervisor::IBM::POWER::HMC::REST::Events::Event:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 
 has     Hypervisor::IBM::POWER::HMC::REST::Config   $.config is required;
-has     LibXML::Element                             $.xml is required;
 
 has     Hypervisor::IBM::POWER::HMC::REST::Atom     $.atom;
 has     Str                                         $.id;

@@ -4,7 +4,6 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Optimize;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 use     URI;
-use     LibXML;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::AssociatedSystemVirtualNetwork:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -18,7 +17,6 @@ my      Lock                                        $lock = Lock.new;
 has     Hypervisor::IBM::POWER::HMC::REST::Config   $.config is required;
 has     Bool                                        $.initialized = False;
 has     Bool                                        $.loaded = False;
-has     LibXML::Element                             $.xml is required;
 has     URI                                         @.NetworkBridges;
 has     Str                                         $.VirtualEthernetAdapterMACAddressPrefix;
 has     URI                                         @.VirtualNetworks;

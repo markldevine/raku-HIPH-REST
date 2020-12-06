@@ -6,7 +6,6 @@ need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::IOBuses::IOBus::IOSlots::IOSlot::RelatedIBMiIOSlot;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::IOBuses::IOBus::IOSlots::IOSlot::RelatedIOAdapter;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::IOBuses::IOBus::IOSlots::IOSlot::IORDevices;
-use     LibXML;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::IOBuses::IOBus::IOSlots::IOSlot:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -20,7 +19,6 @@ my      Lock                                                                    
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                                                                                               $.config is required;
 has     Bool                                                                                                                                                    $.initialized = False;
 has     Bool                                                                                                                                                    $.loaded = False;
-has     LibXML::Element                                                                                                                                         $.xml is required;
 has     Str                                                                                                                                                     $.BusGroupingRequired;
 has     Str                                                                                                                                                     $.Description;
 has     Str                                                                                                                                                     @.FeatureCodes;

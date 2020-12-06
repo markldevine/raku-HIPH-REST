@@ -6,7 +6,6 @@ need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::SRIOVAdapters::IOAdapterChoice::SRIOVAdapter::ConvergedEthernetPhysicalPorts;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::SRIOVAdapters::IOAdapterChoice::SRIOVAdapter::EthernetLogicalPorts;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::SRIOVAdapters::IOAdapterChoice::SRIOVAdapter::UnconfiguredLogicalPorts;
-use     LibXML;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::AssociatedSystemIOConfiguration::SRIOVAdapters::IOAdapterChoice::SRIOVAdapter:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -20,7 +19,6 @@ my      Lock                                                                    
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                                                                                                                       $.config is required;
 has     Bool                                                                                                                                                                            $.initialized = False;
 has     Bool                                                                                                                                                                            $.loaded = False;
-has     LibXML::Element                                                                                                                                                                 $.xml is required;
 has     Str                                                                                                                                                                             $.AdapterID;
 has     Str                                                                                                                                                                             $.Description;
 has     Str                                                                                                                                                                             $.PhysicalLocation;

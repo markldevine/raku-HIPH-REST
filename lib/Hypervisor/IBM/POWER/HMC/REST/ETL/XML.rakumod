@@ -4,6 +4,24 @@ use     URI;
 use     LibXML;
 unit    role Hypervisor::IBM::POWER::HMC::REST::ETL::XML:api<0.0.1>:auth<Mark Devine (mark@markdevine.com)>;
 
+has     LibXML::Element $.xml;
+
+###%    Convert etl-parse-string & etl-parse-path to multi-method etl-parse...
+
+#   self.etl-string(:$xml-string);
+method etl-parse-string (Str:D :$xml-string is required) {
+    my LibXML::Document $dom;
+    die 'Unable to read XML from $xml-string' unless $dom = LibXML.parse(:string($xml-string), :!blanks);
+    $!xml = $dom.documentElement;
+}
+
+#   self.etl-parse(:$xml-path);
+method etl-parse-path (Str:D :$xml-path is required) {
+    my LibXML::Document $dom;
+    die 'Unable to read XML from ' ~ $xml-path unless $dom = LibXML.parse(:location($xml-path), :!blanks);
+    $!xml = $dom.documentElement;
+}
+
 proto method etl-branches (:$TAG is required, :$xml is required, Bool :$optional --> Array) { * };
 multi method etl-branches (Str:D :$TAG is required, LibXML::Document:D :$xml is required, Bool :$optional --> Array) {
     self.config.diag.post: sprintf("%-20s%11s:%12s", &?ROUTINE.name, 'TRANSFORM', 'LibXML::Document -> LibXML::Element') if %*ENV<HIPH_ETL_BRANCHES>;

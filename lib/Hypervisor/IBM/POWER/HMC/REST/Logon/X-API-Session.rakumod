@@ -4,7 +4,6 @@ use     HTTP::Request::Common;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 use     KHPH;
 use     URI;
-use     LibXML;
 unit    monitor Hypervisor::IBM::POWER::HMC::REST::Logon::X-API-Session:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 
@@ -105,10 +104,9 @@ method !PUT () {
     my $response = $!ua.request(PUT $uri, :$content, |%header);
     given $response.code {
         when 200 {
-            my LibXML::Document $xml-doc;
-            die 'Unable to read XML from response' unless $xml-doc = LibXML.parse(:string($response.content), :!blanks);
-            my LibXML::Element $xml    = $xml-doc.documentElement;
-            die unless $!X-API-Session = self.etl-text(:TAG<X-API-Session>, :$xml);
+warn 'new self.etl-parse-string';
+            self.etl-parse-string(:xml-string($response.content));
+            die unless $!X-API-Session = self.etl-text(:TAG<X-API-Session>);
             $ = KHPH.new(
                 :secret($!X-API-Session),
                 :stash-path(self!session-token-stash-path),

@@ -19,7 +19,6 @@ my      Lock                                                                    
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                                                                                                                   $.config is required;
 has     Bool                                                                                                                                                                        $.initialized = False;
 has     Bool                                                                                                                                                                        $.loaded = False;
-has     LibXML::Element                                                                                                                                                             $.xml is required;
 
 has     Str                                                                                                                                                                         $.HasDedicatedProcessors;
 has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::VirtualIOServers::VirtualIOServer::PartitionProcessorConfiguration::SharedProcessorConfiguration          $.SharedProcessorConfiguration;

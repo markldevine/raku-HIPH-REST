@@ -10,6 +10,6 @@ my $mc = Hypervisor::IBM::POWER::HMC::REST::HMC.new(:options(Hypervisor::IBM::PO
 $mc.ManagedSystems.init;
 $mc.ManagedSystems.Initialize-Logical-Partitions;
 $mc.ManagedSystems.Initialize-Virtual-IO-Servers;
-#$mc.ManagedSystems.dump;
+$mc.ManagedSystems.dump;
 
 =finish
